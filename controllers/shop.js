@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 exports.getProducts = async (req, res, next) => {
     const products = await Product.fetchAll();
@@ -12,7 +13,6 @@ exports.getProducts = async (req, res, next) => {
 exports.getProductDetails = async (req, res, next) => {
     const productId = req.params.id;
     const targetProduct = await Product.fetchProductById(productId);
-
     res.render('shop/product-detail', {
         product: targetProduct,
         pageTitle: 'Details Page',
@@ -38,13 +38,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
     const productId = req.body.productId;
-    const targetProduct = await Product.fetchProductById(productId);
+    const productToAdd = await Product.fetchProductById(productId);
+    await Cart.addToCart(productToAdd);
     res.redirect('/cart');
-
-    // res.render('shop/cart', {
-    //     pageTitle: 'Your Cart',
-    //     path: '/cart',
-    // });
 };
 
 exports.getOrders = (req, res, next) => {
