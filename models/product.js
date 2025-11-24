@@ -34,6 +34,20 @@ module.exports = class Product {
         }
     }
 
+    async update() {
+        try {
+            const products = await getProductsFromFile();
+            const productIndex = products.findIndex((p) => p.id === this.id);
+
+            if (productIndex >= 0) {
+                products[productIndex] = this;
+                await fs.writeFile(p, JSON.stringify(products, null, 2));
+            }
+        } catch (err) {
+            console.error('ERROR from the update method on product class', err);
+        }
+    }
+
     static async fetchAll() {
         const products = await getProductsFromFile();
         return products;
