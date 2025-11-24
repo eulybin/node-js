@@ -16,7 +16,8 @@ const getProductsFromFile = async () => {
 
 // Product Class
 module.exports = class Product {
-    constructor(title, imageUrl, description, price) {
+    constructor(id, title, imageUrl, description, price) {
+        this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
         this.description = description;
@@ -36,5 +37,11 @@ module.exports = class Product {
     static async fetchAll() {
         const products = await getProductsFromFile();
         return products;
+    }
+
+    static async fetchProductById(id) {
+        const products = await getProductsFromFile();
+        const targetProduct = products.find((p) => p.id === id);
+        return targetProduct;
     }
 };

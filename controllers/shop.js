@@ -9,6 +9,17 @@ exports.getProducts = async (req, res, next) => {
     });
 };
 
+exports.getProductDetails = async (req, res, next) => {
+    const productId = req.params.id;
+    const targetProduct = await Product.fetchProductById(productId);
+
+    res.render('shop/product-detail', {
+        product: targetProduct,
+        pageTitle: 'Details Page',
+        path: `/products`,
+    });
+};
+
 exports.getIndex = async (req, res, next) => {
     const products = await Product.fetchAll();
     res.render('shop/index', {
