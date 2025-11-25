@@ -29,10 +29,12 @@ exports.getIndex = async (req, res, next) => {
     });
 };
 
-exports.getCart = (req, res, next) => {
+exports.getCart = async (req, res, next) => {
+    const cartItems = await Cart.fetchAllCartItems();
     res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
+        items: cartItems,
     });
 };
 

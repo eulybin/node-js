@@ -48,4 +48,15 @@ module.exports = class Cart {
             console.error('ERROR from the remove from cart method', err);
         }
     }
+
+    static async fetchAllCartItems() {
+        try {
+            const cart = await fs.readFile(p, 'utf-8');
+            const parsedCart = JSON.parse(cart);
+            return parsedCart.items;
+        } catch (err) {
+            console.error('ERROR from the fetch all cart items method', err);
+            return [];
+        }
+    }
 };

@@ -3,4 +3,19 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
+        <main>
+            <% if (items.length > 0) { %>
+                <ul>
+                    <% items.forEach(item => { %>
+                        <li>
+                            <h3><%= item.title %></h3>
+                            <p>Quantity: <%= item.quantity %></p>
+                            <p>Total Price: $<%= item.price * item.quantity %></p>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <h2>Your cart is empty</h2>
+            <% } %>
+        </main>
         <%- include('../includes/end.ejs') %>
