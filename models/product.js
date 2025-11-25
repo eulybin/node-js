@@ -48,6 +48,16 @@ module.exports = class Product {
         }
     }
 
+    static async deleteById(id) {
+        try {
+            const products = await getProductsFromFile();
+            const updatedProducts = products.filter((p) => p.id !== id);
+            await fs.writeFile(p, JSON.stringify(updatedProducts, null, 2));
+        } catch (err) {
+            console.error('ERROR from delete method in Product model', err);
+        }
+    }
+
     static async fetchAll() {
         const products = await getProductsFromFile();
         return products;

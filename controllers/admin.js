@@ -40,7 +40,13 @@ exports.postEditProduct = async (req, res, next) => {
     );
     await product.update();
 
-    res.redirect('/');
+    res.redirect('/admin/products');
+};
+
+exports.deleteProduct = async (req, res, next) => {
+    const productId = req.body.productId;
+    await Product.deleteById(productId);
+    res.redirect('/admin/products');
 };
 
 exports.getProducts = async (req, res, next) => {
