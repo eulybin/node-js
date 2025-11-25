@@ -33,5 +33,19 @@ module.exports = class Cart {
         }
     }
 
-    static async removeFromCart(productId) {}
+    static async removeFromCart(productId) {
+        try {
+            const cart = await fs.readFile(p, 'utf-8');
+            const parsedCart = JSON.parse(cart);
+            const itemToDelete = parsedCart.items.find((item) => item.id === productId);
+
+            const updatedCartItems = parsedCart.items.filter((item) => item.id !== productId);
+            const updatedCartPrice = (parsedCart.totalPrice -= Number(itemToDelete.price) * itemToDelete.quantity);
+            const updatedCart = { items: [...updatedCartItems], totalPrice: updatedCartPrice };
+
+            await fs.writeFile(p, JSON.stringify(updatedCart, null, 2));
+        } catch (err) {
+            console.error('ERROR from the remove from cart method', err);
+        }
+    }
 };
