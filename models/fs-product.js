@@ -68,4 +68,15 @@
 //         const targetProduct = products.find((p) => p.id === id);
 //         return targetProduct;
 //     }
+
+// ----- RAW SQL QUERIES -----
+
+// static fetchAll() {
+//         return db.execute('SELECT * FROM products');
+//     }
+
+//     static fetchProductById(id) {
+//         return db.execute('SELECT * FROM products WHERE id = ?', [id]);
+//     }
+// };
 // };
