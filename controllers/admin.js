@@ -10,14 +10,17 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = async (req, res, next) => {
-    const id = crypto.randomUUID();
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    const product = new Product(id, title, imageUrl, description, price);
-    await product.save();
-    res.redirect('/');
+    try {
+        const product = new Product(null, title, imageUrl, description, price);
+        await product.save();
+        res.redirect('/');
+    } catch (err) {
+        console.error('ERROR from the postAddProduct controller in admin', err);
+    }
 };
 
 exports.getEditProduct = async (req, res, next) => {

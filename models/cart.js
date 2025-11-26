@@ -1,6 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
-const rootDir = require('../util/path');
+const rootDir = require('../utils/path');
 
 const p = path.join(rootDir, 'data', 'cart.json');
 

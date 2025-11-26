@@ -2,31 +2,43 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getProducts = async (req, res, next) => {
-    const products = await Product.fetchAll();
-    res.render('shop/product-list', {
-        prods: products,
-        pageTitle: 'All Products',
-        path: '/products',
-    });
+    try {
+        const [products] = await Product.fetchAll();
+        res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'All Products',
+            path: '/products',
+        });
+    } catch (err) {
+        console.error('ERROR from the getProducts controller');
+    }
 };
 
 exports.getProductDetails = async (req, res, next) => {
     const productId = req.params.id;
-    const targetProduct = await Product.fetchProductById(productId);
-    res.render('shop/product-detail', {
-        product: targetProduct,
-        pageTitle: 'Details Page',
-        path: `/products`,
-    });
+    try {
+        const [products] = await Product.fetchProductById(productId);
+        res.render('shop/product-detail', {
+            product: products[0],
+            pageTitle: 'Details Page',
+            path: `/products`,
+        });
+    } catch (err) {
+        console.error('ERROR from the getProductDetails controller in shop', err);
+    }
 };
 
 exports.getIndex = async (req, res, next) => {
-    const products = await Product.fetchAll();
-    res.render('shop/index', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/',
-    });
+    try {
+        const [products] = await Product.fetchAll();
+        res.render('shop/index', {
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/',
+        });
+    } catch (err) {
+        console.error('ERROR from the getIndex controller');
+    }
 };
 
 exports.getCart = async (req, res, next) => {
