@@ -31,33 +31,49 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.getEditProduct = async (req, res, next) => {
     const productId = req.params.id;
-    const targetProduct = await Product.fetchProductById(productId);
-    res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        product: targetProduct,
-        editing: true,
-    });
+    try {
+        const targetProduct = await Product.findByPk(productId);
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            product: targetProduct,
+            editing: true,
+        });
+    } catch (err) {
+        console.error('ERROR from getEditProduct admin controller', err);
+    }
 };
 
 exports.postEditProduct = async (req, res, next) => {
-    const product = new Product(
-        req.body.productId,
-        req.body.title,
-        req.body.imageUrl,
-        req.body.description,
-        req.body.price
-    );
-    await product.update();
-
-    res.redirect('/admin/products');
+    const productId = req.body.productId;
+    try {
+        await Product.update(
+            {
+                title: req.body.title,
+                imageUrl: req.body.imageUrl,
+                price: req.body.price,
+                description: req.body.description,
+            },
+            {
+                where: { id: productId },
+            }
+        );
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error('ERROR from the postEditProduct admin controller', err);
+    }
 };
 
 exports.deleteProduct = async (req, res, next) => {
     const productId = req.body.productId;
-    await Product.deleteById(productId);
-    await Cart.removeFromCart(productId);
-    res.redirect('/admin/products');
+    try {
+        await Product.destroy({ where: { id: productId } });
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error('ERROR from deleteProduct admin controller', err);
+    }
+
+    // await Cart.removeFromCart(productId);
 };
 
 exports.getProducts = async (req, res, next) => {
