@@ -1,9 +1,24 @@
+/** @type {import('sequelize').ModelStatic<any>} */
+
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
+exports.getIndex = async (req, res, next) => {
+    try {
+        const products = await Product.findAll();
+        res.render('shop/index', {
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/',
+        });
+    } catch (err) {
+        console.error('ERROR from the getIndex controller');
+    }
+};
+
 exports.getProducts = async (req, res, next) => {
     try {
-        const [products] = await Product.fetchAll();
+        const products = await Product.findAll();
         res.render('shop/product-list', {
             prods: products,
             pageTitle: 'All Products',
@@ -17,27 +32,14 @@ exports.getProducts = async (req, res, next) => {
 exports.getProductDetails = async (req, res, next) => {
     const productId = req.params.id;
     try {
-        const [products] = await Product.fetchProductById(productId);
+        const targetProduct = await Product.findByPk(productId);
         res.render('shop/product-detail', {
-            product: products[0],
+            product: targetProduct,
             pageTitle: 'Details Page',
             path: `/products`,
         });
     } catch (err) {
         console.error('ERROR from the getProductDetails controller in shop', err);
-    }
-};
-
-exports.getIndex = async (req, res, next) => {
-    try {
-        const [products] = await Product.fetchAll();
-        res.render('shop/index', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-        });
-    } catch (err) {
-        console.error('ERROR from the getIndex controller');
     }
 };
 

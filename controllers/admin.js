@@ -1,3 +1,5 @@
+/** @type {import('sequelize').ModelStatic<any>} */
+
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
@@ -15,11 +17,15 @@ exports.postAddProduct = async (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     try {
-        const product = new Product(null, title, imageUrl, description, price);
-        await product.save();
+        await Product.create({
+            title,
+            imageUrl,
+            price,
+            description,
+        });
         res.redirect('/');
     } catch (err) {
-        console.error('ERROR from the postAddProduct controller in admin', err);
+        console.error('ERROR from postAddProduct', err);
     }
 };
 
@@ -55,10 +61,14 @@ exports.deleteProduct = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-    const products = await Product.fetchAll();
-    res.render('admin/products', {
-        prods: products,
-        pageTitle: 'Admin Products',
-        path: '/admin/products',
-    });
+    try {
+        const products = await Product.findAll();
+        res.render('admin/products', {
+            prods: products,
+            pageTitle: 'Admin Products',
+            path: '/admin/products',
+        });
+    } catch (err) {
+        console.error('ERROR from getProducts admin controller', err);
+    }
 };
