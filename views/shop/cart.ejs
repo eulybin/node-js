@@ -1,34 +1,48 @@
 <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/cart.css">
     </head>
 
     <body>
         <%- include('../includes/navigation.ejs') %>
         <main>
             <% if (items.length > 0) { %>
-                <ul>
-                    <% items.forEach(item => { %>
-                        <div>
-                            <li>
-                                <h3><%= item.title %></h3>
-                                <p>Quantity: <%= item.CartItem.quantity %></p>
-                                <p>Total Price: $<%= item.price * item.CartItem.quantity %></p>
+                <div class="cart">
+                    <h1>Shopping Cart</h1>
+                    <ul class="cart__list">
+                        <% items.forEach(item => { %>
+                            <li class="cart__item">
+                                <div class="cart__item-details">
+                                    <h3 class="cart__item-title"><%= item.title %></h3>
+                                    <div class="cart__item-info">
+                                        <span>Quantity: <span class="cart__item-quantity"><%= item.CartItem.quantity %></span></span>
+                                        <span>Price: $<%= item.price %></span>
+                                        <span class="cart__item-price">Item Total: $<%= (item.price * item.CartItem.quantity).toFixed(2) %></span>
+                                    </div>
+                                </div>
+                                <div class="cart__item-actions">
+                                    <form action="/cart-delete-item" method="post">
+                                        <input type="hidden" value="<%= item.id %>" name="itemId">
+                                        <button class="btn btn-danger" type="submit">Remove</button>
+                                    </form>
+                                </div>
                             </li>
-                            <form action="/cart-delete-item" method="post">
-                                <input type="hidden" value="<%= item.id %>" name="itemId">
-                                <button class="btn" type="submit">Remove Item</button>
-                            </form>
-
+                        <% }) %>
+                    </ul>
+                    <div class="cart__summary">
+                        <div class="cart__total">
+                            <span class="cart__total-label">Total:</span>
+                            <span class="cart__total-amount">$<%= items.reduce((sum, item) => sum + (item.price * item.CartItem.quantity), 0).toFixed(2) %></span>
                         </div>
-                    <% }) %>
-                </ul>
-                <div class="centered">
-                    <hr />
-                    <form action="/create-order" method="post">
-                        <button class="btn" type="submit">Order Now</button>
-                    </form>
+                        <form action="/create-order" method="post">
+                            <button class="btn" type="submit">Place Order</button>
+                        </form>
+                    </div>
                 </div>
             <% } else { %>
-                <h2>Your cart is empty</h2>
+                <div class="cart__empty">
+                    <h2>Your cart is empty</h2>
+                    <p>Add some products to get started!</p>
+                </div>
             <% } %>
         </main>
         <%- include('../includes/end.ejs') %>

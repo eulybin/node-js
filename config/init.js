@@ -9,8 +9,8 @@ const initDatabase = async (app, port) => {
         let admin = await Admin.findByPk(DEFAULT_ADMIN_ID);
         if (!admin) {
             admin = await Admin.create({ name: 'Egor', email: 'egor@test.com' });
+            await admin.createCart();
         }
-        await admin.createCart();
         app.listen(port, () => console.log(`Server running on port ${port}`));
     } catch (err) {
         console.error('ERROR initializing database:', err);

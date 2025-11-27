@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
@@ -18,7 +17,7 @@ exports.postAddProduct = async (req, res, next) => {
             price: req.body.price,
             description: req.body.description,
         });
-        res.redirect('/');
+        res.redirect('/products');
     } catch (err) {
         console.error('ERROR from postAddProduct', err);
     }
