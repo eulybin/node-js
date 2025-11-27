@@ -1,5 +1,3 @@
-/** @type {import('sequelize').ModelStatic<any>} */
-
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
@@ -64,14 +62,16 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
     const productId = req.body.productId;
+    const admin = req.admin;
     try {
-        await Product.destroy({ where: { id: productId } });
+        const cart = await admin.getCart();
+        const product = await Product.findByPk(productId);
+        await cart.removeProduct(product);
+        await product.destroy();
         res.redirect('/admin/products');
     } catch (err) {
         console.error('ERROR from deleteProduct admin controller', err);
     }
-
-    // await Cart.removeFromCart(productId);
 };
 
 exports.getProducts = async (req, res, next) => {

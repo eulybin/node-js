@@ -1,18 +1,5 @@
 const Product = require('../models/product');
 
-exports.getIndex = async (req, res, next) => {
-    try {
-        const products = await Product.findAll();
-        res.render('shop/index', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-        });
-    } catch (err) {
-        console.error('ERROR from the getIndex controller');
-    }
-};
-
 exports.getProducts = async (req, res, next) => {
     try {
         const products = await Product.findAll();
@@ -22,7 +9,7 @@ exports.getProducts = async (req, res, next) => {
             path: '/products',
         });
     } catch (err) {
-        console.error('ERROR from the getProducts controller');
+        console.error('ERROR from the getProducts controller', err);
     }
 };
 
@@ -124,11 +111,4 @@ exports.getOrders = async (req, res, next) => {
     } catch (err) {
         console.error('ERROR from getOrder in shop controllers', err);
     }
-};
-
-exports.getCheckout = (req, res, next) => {
-    res.render('shop/checkout', {
-        path: '/checkout',
-        pageTitle: 'Checkout',
-    });
 };
