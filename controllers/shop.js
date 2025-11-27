@@ -1,6 +1,3 @@
-/** @type {import('sequelize').ModelStatic<any>} */
-
-const Cart = require('../models/cart');
 const Product = require('../models/product');
 
 exports.getIndex = async (req, res, next) => {
@@ -96,11 +93,37 @@ exports.deleteCartItem = async (req, res, next) => {
     }
 };
 
-exports.getOrders = (req, res, next) => {
-    res.render('shop/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders',
-    });
+exports.postCreateOrder = async (req, res, next) => {
+    const admin = req.admin;
+    try {
+        const cart = await admin.getCart();
+        const products = await cart.getProducts();
+        const order = await admin.createOrder();
+        await order.addProducts(
+            products.map((p) => {
+                p.OrderItem = { quantity: p.CartItem.quantity };
+                return p;
+            })
+        );
+        await cart.setProducts(null);
+        res.redirect('/orders');
+    } catch (err) {
+        console.error('ERROR from postCreateOrder in shop controllers', err);
+    }
+};
+
+exports.getOrders = async (req, res, next) => {
+    const admin = req.admin;
+    try {
+        const orders = await admin.getOrders({ include: ['products'] });
+        res.render('shop/orders', {
+            path: '/orders',
+            pageTitle: 'Your Orders',
+            orders: orders,
+        });
+    } catch (err) {
+        console.error('ERROR from getOrder in shop controllers', err);
+    }
 };
 
 exports.getCheckout = (req, res, next) => {

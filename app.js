@@ -12,14 +12,12 @@ const shopRoutes = require('./routes/shop');
 const sequelize = require('./utils/database');
 
 // import models
-/** @type {import('sequelize').ModelStatic<any>} */
 const Product = require('./models/product');
-/** @type {import('sequelize').ModelStatic<any>} */
 const Admin = require('./models/admin');
-/** @type {import('sequelize').ModelStatic<any>} */
 const Cart = require('./models/cart');
-/** @type {import('sequelize').ModelStatic<any>} */
 const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 // set up view engine
 app.set('view engine', 'ejs');
@@ -57,6 +55,12 @@ Cart.belongsTo(Admin, { constraints: true, onDelete: 'CASCADE' });
 
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+
+Admin.hasMany(Order);
+Order.belongsTo(Admin, { constraints: true, onDelete: 'CASCADE' });
+
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
 
 // set up db with sequelize and start server
 sequelize
