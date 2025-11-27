@@ -15,7 +15,11 @@ const sequelize = require('./utils/database');
 /** @type {import('sequelize').ModelStatic<any>} */
 const Product = require('./models/product');
 /** @type {import('sequelize').ModelStatic<any>} */
-const User = require('./models/user');
+const Admin = require('./models/admin');
+/** @type {import('sequelize').ModelStatic<any>} */
+const Cart = require('./models/cart');
+/** @type {import('sequelize').ModelStatic<any>} */
+const CartItem = require('./models/cart-item');
 
 // set up view engine
 app.set('view engine', 'ejs');
@@ -26,14 +30,14 @@ app.use(express.urlencoded({ extended: false }));
 // give express access to static files like CSS
 app.use(express.static(path.join(__dirname, 'public')));
 
-// pass User into all controllers
+// pass Admin into all controllers
 app.use(async (req, res, next) => {
     try {
-        const user = await User.findByPk(1);
-        req.user = user;
+        const admin = await Admin.findByPk(1);
+        req.admin = admin;
         next();
     } catch (err) {
-        console.error('ERROR from user set up middleware in app.js', err);
+        console.error('ERROR from admin set up middleware in app.js', err);
     }
 });
 
@@ -45,23 +49,29 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 // set up models relationships
-User.hasMany(Product);
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+Admin.hasMany(Product);
+Product.belongsTo(Admin, { constraints: true, onDelete: 'CASCADE' });
+
+Admin.hasOne(Cart);
+Cart.belongsTo(Admin, { constraints: true, onDelete: 'CASCADE' });
+
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 // set up db with sequelize and start server
 sequelize
     .sync()
     .then(() => {
-        return User.findByPk(1);
+        return Admin.findByPk(1);
     })
-    .then((user) => {
-        if (!user) {
-            return User.create({
+    .then((admin) => {
+        if (!admin) {
+            return Admin.create({
                 name: 'Egor',
                 email: 'egor@test.com',
             });
         }
-        return user;
+        return admin;
     })
     .then(() => {
         app.listen(5006);

@@ -12,9 +12,9 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = async (req, res, next) => {
-    const User = req.user;
+    const Admin = req.admin;
     try {
-        await User.createProduct({
+        await Admin.createProduct({
             title: req.body.title,
             imageUrl: req.body.imageUrl,
             price: req.body.price,
@@ -28,9 +28,9 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.getEditProduct = async (req, res, next) => {
     const productId = req.params.id;
-    const User = req.user;
+    const Admin = req.admin;
     try {
-        const products = await User.getProducts({ where: { id: productId } });
+        const products = await Admin.getProducts({ where: { id: productId } });
         res.render('admin/edit-product', {
             pageTitle: 'Edit Product',
             path: '/admin/edit-product',
@@ -75,9 +75,9 @@ exports.deleteProduct = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-    const User = req.user;
+    const Admin = req.admin;
     try {
-        const products = await User.getProducts();
+        const products = await Admin.getProducts();
         res.render('admin/products', {
             prods: products,
             pageTitle: 'Admin Products',

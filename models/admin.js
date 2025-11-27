@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../utils/database');
 
-const User = sequelize.define('user', {
+const Admin = sequelize.define('admin', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -20,4 +20,4 @@ const User = sequelize.define('user', {
     },
 });
 
-module.exports = User;
+module.exports = Admin;
