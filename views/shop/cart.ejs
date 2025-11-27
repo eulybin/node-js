@@ -10,8 +10,8 @@
                         <div>
                             <li>
                                 <h3><%= item.title %></h3>
-                                <p>Quantity: <%= item.quantity %></p>
-                                <p>Total Price: $<%= item.price * item.quantity %></p>
+                                <p>Quantity: <%= item.CartItem.quantity %></p>
+                                <p>Total Price: $<%= item.price * item.CartItem.quantity %></p>
                             </li>
                             <form action="/cart-delete-item" method="post">
                                 <input type="hidden" value="<%= item.id %>" name="itemId">

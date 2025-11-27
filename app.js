@@ -73,6 +73,9 @@ sequelize
         }
         return admin;
     })
+    .then((admin) => {
+        return admin.createCart();
+    })
     .then(() => {
         app.listen(5006);
     })

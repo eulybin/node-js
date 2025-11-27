@@ -1,7 +1,7 @@
 /** @type {import('sequelize').ModelStatic<any>} */
 
-const Product = require('../models/product');
 const Cart = require('../models/cart');
+const Product = require('../models/product');
 
 exports.getIndex = async (req, res, next) => {
     try {
@@ -44,25 +44,56 @@ exports.getProductDetails = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-    const cartItems = await Cart.fetchAllCartItems();
-    res.render('shop/cart', {
-        path: '/cart',
-        pageTitle: 'Your Cart',
-        items: cartItems,
-    });
+    const admin = req.admin;
+    try {
+        const cart = await admin.getCart();
+        const cartItems = await cart.getProducts();
+        res.render('shop/cart', {
+            path: '/cart',
+            pageTitle: 'Your Cart',
+            items: cartItems,
+        });
+    } catch (err) {
+        console.error('ERROR from getCart shop controller', err);
+    }
 };
 
 exports.postCart = async (req, res, next) => {
     const productId = req.body.productId;
-    const productToAdd = await Product.fetchProductById(productId);
-    await Cart.addToCart(productToAdd);
-    res.redirect('/cart');
+    const admin = req.admin;
+    try {
+        const cart = await admin.getCart();
+        const products = await cart.getProducts({ where: { id: productId } });
+        let product;
+
+        if (products.length > 0) {
+            product = products[0];
+            const oldQuantity = product.CartItem.quantity;
+            await product.CartItem.update({ quantity: oldQuantity + 1 });
+        } else {
+            product = await Product.findByPk(productId);
+            await cart.addProduct(product, { through: { quantity: 1 } });
+        }
+
+        res.redirect('/cart');
+    } catch (err) {
+        console.error('ERROR from postCart in shop controller', err);
+    }
 };
 
 exports.deleteCartItem = async (req, res, next) => {
-    const cartItemId = req.body.itemId;
-    await Cart.removeFromCart(cartItemId);
-    res.redirect('/cart');
+    const itemId = req.body.itemId;
+    const admin = req.admin;
+    try {
+        const cart = await admin.getCart();
+        const products = await cart.getProducts({ where: { id: itemId } });
+        if (products.length > 0) {
+            await products[0].CartItem.destroy();
+        }
+        res.redirect('/cart');
+    } catch (err) {
+        console.error('ERROR from deleteCartItem in shop controllers', err);
+    }
 };
 
 exports.getOrders = (req, res, next) => {
