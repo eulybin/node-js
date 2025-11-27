@@ -8,6 +8,9 @@ const errorController = require('./controllers/error');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
+// import database
+const sequelize = require('./utils/database');
+
 // set up view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -24,5 +27,12 @@ app.use(shopRoutes);
 //404 page
 app.use(errorController.get404);
 
-// localhost
-app.listen(5006);
+// set up db with sequelize and start server
+sequelize
+    .sync()
+    .then(() => {
+        app.listen(5006);
+    })
+    .catch((err) => {
+        console.error('ERROR syncing database:', err);
+    });
